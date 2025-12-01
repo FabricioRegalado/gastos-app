@@ -104,6 +104,66 @@
   animation: iosCardIn 360ms cubic-bezier(.2,.9,.3,1) both;
 }
 
+/* Cards row: nicer horizontal scroll, snap and hidden scrollbar */
+.cards-row {
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+.cards-row {
+  scroll-snap-type: x mandatory;
+}
+.cards-row::-webkit-scrollbar { display: none }
+.cards-row { scrollbar-width: none }
+.cards-row::after,
+.cards-row::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 36px;
+  pointer-events: none;
+}
+.cards-row::before { left: 0; background: linear-gradient(90deg, var(--panel), transparent) }
+.cards-row::after { right: 0; background: linear-gradient(270deg, var(--panel), transparent) }
+
+/* Make ios cards more eye-catching */
+.ios-card {
+  position: relative;
+  overflow: hidden;
+  padding: 0; /* we handle padding inside article/button */
+}
+.ios-card::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 14px;
+  width: 6px;
+  height: calc(100% - 28px);
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(14,165,233,0.95), rgba(6,182,212,0.6));
+  box-shadow: 0 6px 18px rgba(6,30,45,0.24);
+  transform-origin: center;
+}
+
+/* ensure content inside the card leaves space for the accent bar */
+.ios-card > button { padding-left: 44px }
+
+/* elevated, colorful amount */
+.card-amount { font-size: 1.05rem; font-weight:800; color: #fff }
+.ios-card.card-expanded { box-shadow: 0 20px 44px rgba(2,6,23,0.6); transform: translateY(-6px) }
+
+/* small avatar/icon left */
+.card-icon {
+  width: 44px; height:44px; border-radius:10px; display:inline-flex; align-items:center; justify-content:center; margin-right:10px; background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.008));
+  color: var(--panel);
+  font-weight:700;
+}
+
+@media (min-width: 768px) {
+  .cards-row > * { scroll-snap-align: start }
+  .cards-row { padding: 8px 8px }
+}
+
 .ios-button {
   border-radius: 12px;
   transition: transform 140ms cubic-bezier(.2,.9,.3,1), box-shadow 140ms ease, background-color 140ms ease;
@@ -164,6 +224,7 @@
 @media (max-width: 520px) {
   .ios-button { padding: 0.75rem 1rem; border-radius: 14px }
   .ios-fab button { width: 64px; height: 64px; border-radius: 32px }
+  .ios-card > button { padding-left: 36px }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -382,6 +443,23 @@ body{
 /* improve FAB interactions */
 .ios-fab button:hover { transform: translateY(-3px) scale(1.02) }
 .ios-fab button:focus-visible { outline: 3px solid rgba(14,165,233,0.14); outline-offset: 4px }
+
+/* send summary button specifics */
+.send-summary-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px }
+.send-summary-btn .icon { display:inline-flex; width:18px; height:18px }
+
+/* confirmation card/modal improvements */
+.confirm-card { background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006)); border: 1px solid rgba(255,255,255,0.04); padding: 14px; border-radius: 12px }
+.confirm-title { font-size:16px; font-weight:700; color:#fff; margin-bottom:6px }
+.confirm-body { color: var(--muted-2); font-size:13px; margin-bottom:12px }
+.confirm-totals { display:flex; gap:10px; margin-bottom:12px }
+.confirm-totals .chip { padding:8px 10px; border-radius:10px; font-weight:700; color:#071026 }
+.chip-pend { background: linear-gradient(90deg, rgba(245,158,11,0.14), rgba(245,158,11,0.06)); }
+.chip-paid { background: linear-gradient(90deg, rgba(16,185,129,0.14), rgba(16,185,129,0.06)); }
+
+/* danger button variant */
+.btn-danger { background: linear-gradient(90deg,#ef4444,#f97316); color: white; border: none; box-shadow: 0 12px 30px rgba(233,63,35,0.2); }
+.btn-danger:hover { transform: translateY(-3px) }
 
 /* Small UI polish */
 .card-title{ color: #eef2ff }
