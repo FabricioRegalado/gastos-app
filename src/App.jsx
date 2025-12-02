@@ -942,13 +942,7 @@ function App() {
               <h2 className="text-base md:text-lg font-semibold">
                 Tarjetas rápidas
               </h2>
-              {deudas.length > 0 && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2.5 py-0.5 text-[11px] md:text-xs text-slate-300 border border-slate-700/80">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                  {filteredDeudas.length} registro
-                  {filteredDeudas.length === 1 ? "" : "s"}
-                </span>
-              )}
+              {/* contador de registros eliminado para mejorar lectura en pantallas pequeñas */}
             </div>
             <span className="text-[11px] md:text-xs text-slate-500">
               Vista compacta por deuda
@@ -961,7 +955,7 @@ function App() {
               <strong className="font-semibold">+</strong> de abajo.
             </p>
           ) : (
-            <div className="flex flex-col md:flex-row gap-3.5 md:gap-4 md:overflow-x-auto pb-1 md:pb-2 -mx-1 px-1">
+            <div className="flex flex-row md:flex-row gap-3.5 md:gap-4 overflow-x-auto pb-1 md:pb-2 -mx-1 px-1 cards-row">
               {filteredDeudas.map((d) => {
                 const isOpen = expandedId === d.id;
                 const category = getCategory(d.descripcion);
@@ -972,11 +966,12 @@ function App() {
                   <article
                     key={d.id}
                     className={
-                      "group w-full md:min-w-[300px] flex-shrink-0 rounded-2xl border ios-card ios-card-enter md:snap-start transition-all duration-200 " +
+                      "group min-w-[260px] md:min-w-[300px] flex-shrink-0 rounded-2xl border ios-card ios-card-enter md:snap-start transition-all duration-200 " +
                       (isOpen
                         ? "shadow-lg border-slate-700 bg-slate-900/90"
                         : "border-slate-800 bg-slate-900/80 hover:border-slate-700/80 hover:bg-slate-900")
                     }
+                    style={{ width: 'auto' }}
                   >
                     {/* Cabecera de la tarjeta */}
                     <button

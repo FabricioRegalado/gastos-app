@@ -278,6 +278,29 @@
   color: #0f172a;
 }
 
+/* Header title + badge safety: avoid visual overlapping on narrow viewports */
+.flex.items-baseline > h2 {
+  display: inline-block;
+  line-height: 1.05;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+.flex.items-baseline > .inline-flex.items-center {
+  position: relative;
+  z-index: 2;
+  margin-left: 6px;
+}
+
+/* Ensure the header container doesn't clip or overlay children */
+.flex.items-baseline { overflow: visible; align-items: baseline }
+
+/* Stronger small-screen fix: center-align title + badge to avoid overlap */
+@media (max-width: 520px) {
+  .flex.items-baseline { align-items: center !important; gap: 8px !important }
+  .flex.items-baseline > h2 { margin: 0 !important; vertical-align: middle !important }
+  .flex.items-baseline > .inline-flex.items-center { margin-left: 8px !important; top: 0 !important }
+}
+
 /* Floating action button (iOS style) */
 .ios-fab {
   position: fixed;
@@ -311,6 +334,8 @@
 .ios-modal-sheet {
   width: 100%;
   max-width: 680px;
+  max-height: 90vh;
+  overflow: auto;
   /* Fondo completamente sólido para mejor legibilidad */
   background: linear-gradient(180deg,var(--panel), var(--surface));
   border-radius: 16px 16px 0 0;
@@ -497,5 +522,106 @@ body{
 .card-meta{ color: rgba(226,232,240,0.6) }
 .ios-header .ios-title{ color: #f8fafc }
 .read-the-docs{ color: var(--muted) }
+
+/* ===== Strong overflow protection for small screens =====
+   These rules aim to eliminate ANY horizontal overflow on phones
+   and make the quick-cards area safe even with long texts or badges.
+*/
+html, body, #root { max-width: 100%; overflow-x: hidden; }
+.app-shell { overflow-x: hidden; }
+
+/* Cards row: force children to fit viewport and avoid accidental overflow */
+.cards-row { overflow-x: auto; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+.cards-row > * { box-sizing: border-box; flex-shrink: 0; max-width: calc(100% - 48px); }
+
+/* Ensure cards don't exceed container and truncate safely */
+.ios-card { max-width: 100% !important; box-sizing: border-box; overflow: hidden; }
+.ios-card * { box-sizing: border-box; }
+
+/* Truncate long inline elements inside cards on very small screens */
+@media (max-width: 520px) {
+  .cards-row { padding: 8px 10px 110px 10px; /* bottom padding to keep FAB from covering cards */ }
+  .cards-row > * { min-width: 200px; width: calc(100% - 40px); }
+  /* Allow the title to wrap up to 2 lines (more readable), keep amount single-line */
+  .ios-card .card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    max-width: 100%;
+    line-height: 1.15;
+    /* ensure enough height for two lines */
+    max-height: calc(1.15em * 2 + 4px);
+  }
+  .ios-card .card-meta {
+    white-space: normal; max-width: 100%; color: rgba(226,232,240,0.6);
+  }
+  .ios-card .card-amount, .ios-card .card-icon {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  }
+
+  /* Stack header on very small screens for better distribution */
+  .card-header { display: flex; flex-direction: column; align-items: flex-start; gap: 6px }
+  .card-header .card-amount { align-self: flex-end }
+
+  /* Safety: ensure title gets full available width when header is stacked */
+  .ios-card .card-title { width: 100%; }
+  .ios-card::before { left: 8px; width: 4px; top: 10px; height: calc(100% - 20px); }
+  /* Move content left to sit closer to the accent bar (avoid empty gap) */
+  .ios-card > button { padding-left: 14px !important }
+  .ios-card { padding: 10px; }
+  .ios-fab { right: 16px; bottom: 18px; z-index: 120 }
+}
+
+/* === Header grid + badge reposition + icon size reduction on small screens === */
+@media (max-width: 520px) {
+  /* Make header use two columns: main content (icon+title) and actions (amount/badges) */
+  .ios-card > button > div {
+    display: grid !important;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    align-items: start;
+  }
+
+  /* Ensure the left block (icon + title/tags) keeps its horizontal layout */
+  .ios-card > button > div > :first-child {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    min-width: 0;
+  }
+
+  /* Right actions column should be compact and stack badges under amount */
+  .ios-card > button > div > :last-child {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  /* Move the 'Próx' badge visually under the amount (if rendered inline) */
+  .ios-card > button .inline-flex.items-center.rounded-full.bg-emerald-100 {
+    display: inline-block; margin-top: 4px;
+  }
+
+  /* Reduce the left avatar/icon size to give title more room */
+  .ios-card > button .h-9.w-9 {
+    width: 34px !important; height: 34px !important; font-size: 12px !important;
+  }
+
+  /* Hide the avatar on very small screens to maximize title width */
+  .ios-card > button .h-9.w-9 { display: none !important }
+
+  /* If the title still needs room, allow it to take up to two lines (already clamped) */
+  .ios-card .card-title { -webkit-line-clamp: 2; }
+}
+
+/* final safety: if anything still overflows, hide the horizontal scrollbar */
+@media (max-width: 520px) {
+  html, body { overflow-x: hidden; }
+}
+
 
 
