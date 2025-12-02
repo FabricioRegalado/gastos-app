@@ -1,0 +1,19 @@
+.mini-calendar {
+  display: block;
+}
+.mini-month {
+  min-width: 140px;
+  border: 1px solid rgba(148,163,184,0.06);
+}
+.mini-month-label {
+  font-weight: 600;
+}
+.due-paid {
+  color: #34d399;
+}
+.due-mark {
+  color: #fbbf24;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}

@@ -386,6 +386,36 @@ body{
   border-radius: 14px;
 }
 
+/* Section cards: clearer delimiters between major parts of the app */
+.app-shell > .ios-header,
+.app-shell > section,
+.app-shell > .ios-fab {
+  /* make each major block feel like a card */
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.004));
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+/* Slight visual grouping for section headers */
+.app-shell section h2, .app-shell section .font-medium {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.01);
+}
+
+/* Add subtle separators between content rows inside sections */
+.app-shell .section-row + .section-row {
+  border-top: 1px solid rgba(255,255,255,0.02);
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+/* Improve contrast for the floating FAB container so it doesn't feel stuck to the edge */
+.ios-fab { padding: 8px }
+
 /* Adjust cards/buttons to new palette */
 .ios-card{ background: linear-gradient(180deg, var(--glass), rgba(255,255,255,0.006)); border: 1px solid rgba(255,255,255,0.03); }
 .ios-fab button{ background: var(--accent-alt); box-shadow: 0 14px 36px rgba(4,20,36,0.65); }
@@ -467,3 +497,5 @@ body{
 .card-meta{ color: rgba(226,232,240,0.6) }
 .ios-header .ios-title{ color: #f8fafc }
 .read-the-docs{ color: var(--muted) }
+
+
