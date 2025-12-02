@@ -142,7 +142,10 @@ function App() {
   function formatDateShort(dateStr) {
     try {
       const d = new Date(dateStr);
-      return d.toLocaleDateString(undefined, { day: "2-digit", month: "short" });
+      return d.toLocaleDateString(undefined, {
+        day: "2-digit",
+        month: "short",
+      });
     } catch {
       return dateStr;
     }
@@ -151,7 +154,9 @@ function App() {
   function daysAgo(dateStr) {
     try {
       const d = new Date(dateStr);
-      const diff = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+      const diff = Math.floor(
+        (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24)
+      );
       if (diff === 0) return "hoy";
       if (diff === 1) return "hace 1 día";
       return `hace ${diff} días`;
@@ -163,11 +168,24 @@ function App() {
   function getCategory(text) {
     if (!text) return "Otros";
     const t = text.toLowerCase();
-    if (t.includes("tel") || t.includes("telefono") || t.includes("cel")) return "Teléfono";
+    if (t.includes("tel") || t.includes("telefono") || t.includes("cel"))
+      return "Teléfono";
     if (t.includes("tarjeta")) return "Tarjeta";
-    if (t.includes("prestamo") || t.includes("préstamo") || t.includes("loan")) return "Préstamo";
-    if (t.includes("comida") || t.includes("resta") || t.includes("restaurante")) return "Alimentos";
-    if (t.includes("servicio") || t.includes("luz") || t.includes("agua") || t.includes("internet")) return "Servicios";
+    if (
+      t.includes("prestamo") ||
+      t.includes("préstamo") ||
+      t.includes("loan")
+    )
+      return "Préstamo";
+    if (t.includes("comida") || t.includes("resta") || t.includes("restaurante"))
+      return "Alimentos";
+    if (
+      t.includes("servicio") ||
+      t.includes("luz") ||
+      t.includes("agua") ||
+      t.includes("internet")
+    )
+      return "Servicios";
     return "Otros";
   }
 
@@ -443,64 +461,97 @@ function App() {
         {/* Tarjetas resumen */}
         <section className="mb-6">
           <div className="flex items-center justify-between mb-2.5">
-            <h2 className="text-base md:text-lg font-semibold">
-              Tarjetas rápidas
-            </h2>
-            <span className="text-[11px] md:text-xs text-slate-400">
-              {filteredDeudas.length} registro
-              {filteredDeudas.length === 1 ? "" : "s"}
+            <div className="flex items-baseline gap-2">
+              <h2 className="text-base md:text-lg font-semibold">
+                Tarjetas rápidas
+              </h2>
+              {deudas.length > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-slate-800/80 px-2.5 py-0.5 text-[11px] md:text-xs text-slate-300 border border-slate-700/80">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                  {filteredDeudas.length} registro
+                  {filteredDeudas.length === 1 ? "" : "s"}
+                </span>
+              )}
+            </div>
+            <span className="text-[11px] md:text-xs text-slate-500">
+              Vista compacta por deuda
             </span>
           </div>
 
           {deudas.length === 0 ? (
-            <p className="text-sm text-slate-400 bg-slate-900/70 rounded-2xl border border-dashed border-slate-700 px-4 py-3 text-center">
-              No hay deudas para mostrar como tarjetas. Agrega una nueva con el
-              botón <strong className="font-semibold">+</strong> de abajo.
+            <p className="text-sm text-slate-400 bg-slate-900/70 rounded-2xl border border-dashed border-slate-700 px-4 py-4 text-center">
+              No hay deudas para mostrar todavía. Agrega una nueva con el botón{" "}
+              <strong className="font-semibold">+</strong> de abajo.
             </p>
           ) : (
             <div className="flex flex-col md:flex-row gap-3.5 md:gap-4 md:overflow-x-auto pb-1 md:pb-2 -mx-1 px-1">
               {filteredDeudas.map((d) => {
                 const isOpen = expandedId === d.id;
+                const category = getCategory(d.descripcion);
+                const initials = getInitials(d.descripcion);
+                const isPendiente = d.estado === "pendiente";
+
                 return (
                   <article
                     key={d.id}
-                    className={`w-full md:min-w-[300px] flex-shrink-0 bg-slate-900/80 rounded-2xl border border-slate-800 ios-card ios-card-enter md:snap-start transition-all duration-200 ${
-                      isOpen ? "card-expanded shadow-lg" : "card-collapsed"
-                    }`}
+                    className={
+                      "group w-full md:min-w-[300px] flex-shrink-0 rounded-2xl border ios-card ios-card-enter md:snap-start transition-all duration-200 " +
+                      (isOpen
+                        ? "card-expanded shadow-lg border-slate-700 bg-slate-900/90"
+                        : "card-collapsed border-slate-800 bg-slate-900/80 hover:border-slate-700/80 hover:bg-slate-900")
+                    }
                   >
+                    {/* Cabecera de la tarjeta */}
                     <button
                       onClick={() => toggleExpand(d.id)}
                       className="w-full text-left px-3.5 py-3 md:px-4 md:py-3.5"
                       style={{ border: "none", background: "transparent" }}
                     >
-                      <div className="card-header flex items-start justify-between gap-3">
+                      <div className="flex items-start justify-between gap-3">
+                        {/* Icono + texto principal */}
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="card-icon">
-                            <span className="text-sm font-semibold text-slate-800">{getInitials(d.descripcion)}</span>
+                          <div
+                            className={
+                              "card-icon flex h-9 w-9 items-center justify-center rounded-full text-xs font-semibold " +
+                              (isPendiente
+                                ? "bg-amber-400/90 text-slate-900"
+                                : "bg-emerald-400/90 text-slate-900")
+                            }
+                          >
+                            {initials}
                           </div>
                           <div className="min-w-0">
-                            <div className="text-xs text-slate-300 uppercase tracking-wide">{getCategory(d.descripcion)}</div>
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="inline-flex items-center rounded-full bg-slate-800/70 px-2 py-0.5 text-[10px] uppercase tracking-wide text-slate-300 border border-slate-700/80">
+                                {category}
+                              </span>
+                              {!isOpen && (
+                                <span className="text-[10px] text-slate-500">
+                                  {formatDateShort(d.fecha)} ·{" "}
+                                  {daysAgo(d.fecha)}
+                                </span>
+                              )}
+                            </div>
                             <div className="card-title text-sm md:text-base font-semibold text-slate-100 truncate">
                               {d.descripcion}
                             </div>
-                            {!isOpen && (
-                              <div className="card-meta text-[11px] md:text-xs text-slate-400 mt-0.5">
-                                {formatDateShort(d.fecha)} · {daysAgo(d.fecha)}
-                              </div>
-                            )}
                           </div>
                         </div>
 
+                        {/* Estado + monto */}
                         <div className="flex flex-col items-end gap-1.5">
                           <div className="flex items-center gap-1.5">
                             <div
-                              className={`chevron ${
-                                isOpen ? "open" : ""
-                              } text-slate-400`}
+                              className={
+                                "h-5 w-5 flex items-center justify-center rounded-full border text-[10px] text-slate-300 transition-transform " +
+                                (isOpen
+                                  ? "border-slate-500 bg-slate-800 rotate-180"
+                                  : "border-slate-700 bg-slate-900 group-hover:border-slate-500")
+                              }
                             >
                               <svg
-                                width="16"
-                                height="16"
+                                width="12"
+                                height="12"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -533,14 +584,23 @@ function App() {
                       </div>
                     </button>
 
+                    {/* Detalle expandido */}
                     {isOpen && (
-                      <div className="mt-1 px-3.5 pb-3.5 md:px-4 md:pb-4">
-                        <p className="card-meta text-[11px] md:text-xs text-slate-400 mb-2">
-                          Fecha:{" "}
-                          <span className="font-medium text-slate-200">
-                            {d.fecha}
+                      <div className="mt-1 px-3.5 pb-3.5 md:px-4 md:pb-4 border-t border-slate-800/80 bg-slate-950/60 rounded-b-2xl">
+                        <div className="flex items-center justify-between text-[11px] md:text-xs text-slate-400 mb-2.5">
+                          <span>
+                            Fecha completa:{" "}
+                            <span className="font-medium text-slate-200">
+                              {d.fecha}
+                            </span>
                           </span>
-                        </p>
+                          <span className="text-slate-500">
+                            Registrado{" "}
+                            {daysAgo(
+                              d.creadaEn?.slice(0, 10) || d.fecha
+                            )}
+                          </span>
+                        </div>
                         <div className="mt-2 flex flex-col sm:flex-row gap-2">
                           <button
                             onClick={() => {
@@ -689,9 +749,7 @@ function App() {
                 }}
                 className="mt-2 space-y-3"
               >
-                <h3 className="text-lg font-semibold mb-1">
-                  Nueva deuda
-                </h3>
+                <h3 className="text-lg font-semibold mb-1">Nueva deuda</h3>
                 <div className="grid md:grid-cols-2 gap-3">
                   <div className="md:col-span-2">
                     <label className="block text-xs font-medium mb-1 text-slate-300">
@@ -751,8 +809,7 @@ function App() {
                     >
                       {ESTADOS.map((estado) => (
                         <option key={estado} value={estado}>
-                          {estado.charAt(0).toUpperCase() +
-                            estado.slice(1)}
+                          {estado.charAt(0).toUpperCase() + estado.slice(1)}
                         </option>
                       ))}
                     </select>
